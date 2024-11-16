@@ -1,5 +1,6 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import models
 
 
 User = get_user_model()
@@ -33,8 +34,7 @@ class Location(PublishedModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self) -> str:
-        name = str(self.name)
-        return name[:20]
+        return self.name[:settings.REPRESENTATION_LENGTH]
 
 
 class Category(PublishedModel):
@@ -49,8 +49,10 @@ class Category(PublishedModel):
         max_length=64,
         unique=True,
         verbose_name='Идентификатор',
-        help_text='Идентификатор страницы для URL; '
-                  'разрешены символы латиницы, цифры, дефис и подчёркивание.'
+        help_text=(
+            'Идентификатор страницы для URL; '
+            'разрешены символы латиницы, цифры, дефис и подчёркивание.'
+        )
     )
 
     class Meta:
@@ -58,8 +60,7 @@ class Category(PublishedModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
-        title = str(self.title)
-        return title[:20]
+        return self.title[:settings.REPRESENTATION_LENGTH]
 
 
 class Post(PublishedModel):
@@ -108,8 +109,7 @@ class Post(PublishedModel):
         verbose_name_plural = 'Публикации'
 
     def __str__(self) -> str:
-        title = str(self.title)
-        return title[:20]
+        return self.title[:settings.REPRESENTATION_LENGTH]
 
 
 class Comment(PublishedModel):
@@ -139,5 +139,4 @@ class Comment(PublishedModel):
         ordering = ('created_at',)
 
     def __str__(self) -> str:
-        text = str(self.text)
-        return text[:20]
+        return self.text[:settings.REPRESENTATION_LENGTH]

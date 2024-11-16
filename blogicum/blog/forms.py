@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Post, User, Comment
+from .models import Comment, Post, User
 
 
 class PostForm(forms.ModelForm):
@@ -24,3 +24,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('text',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['text'].widget.attrs.update({
+            'style': 'height: 100px; width: 600px;'
+        })
