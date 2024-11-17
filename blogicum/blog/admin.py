@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from .models import Category, Comment, Location, Post
+from .models import Category, Comment, Location,  Post
 
 
+@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         'title',
@@ -24,5 +25,4 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Location)
 admin.site.register(Category)
-admin.site.register(Post, PostAdmin)
 admin.site.register(Comment)

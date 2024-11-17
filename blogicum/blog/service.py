@@ -2,16 +2,25 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.utils import timezone
 
+from .constants import POSTS_BY_PAGE
+from .models import Post
 
-def get_posts(post_objects):
+
+def get_posts(post_objects=Post.objects.select_related(
+        'author', 'category', 'location'), include_hidden=False):
     """Посты из БД."""
-    return post_objects.filter(
-        pub_date__lte=timezone.now(),
-        is_published=True,
-        category__is_published=True
-    ).annotate(comment_count=Count('comments'))
+    if include_hidden:
+        return post_objects.annotate(comment_count=Count('comments')
+                                     ).order_by('-pub_date')
+    else:
+        return post_objects.filter(
+            pub_date__lte=timezone.now(),
+            is_published=True,
+            category__is_published=True
+        ).annotate(comment_count=Count('comments')
+                   ).order_by('-pub_date')
 
 
-def get_paginator(request, items, num=10):
+def get_paginator(request, items, num=POSTS_BY_PAGE):
     """Создает объект пагинации."""
     return Paginator(items, num).get_page(request.GET.get('page'))

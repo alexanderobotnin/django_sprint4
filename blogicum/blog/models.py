@@ -1,7 +1,7 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from .constants import REPRESENTATION_LENGTH
 
 User = get_user_model()
 
@@ -34,7 +34,7 @@ class Location(PublishedModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self) -> str:
-        return self.name[:settings.REPRESENTATION_LENGTH]
+        return self.name[:REPRESENTATION_LENGTH]
 
 
 class Category(PublishedModel):
@@ -60,7 +60,7 @@ class Category(PublishedModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self) -> str:
-        return self.title[:settings.REPRESENTATION_LENGTH]
+        return self.title[:REPRESENTATION_LENGTH]
 
 
 class Post(PublishedModel):
@@ -109,7 +109,7 @@ class Post(PublishedModel):
         verbose_name_plural = 'Публикации'
 
     def __str__(self) -> str:
-        return self.title[:settings.REPRESENTATION_LENGTH]
+        return self.title[:REPRESENTATION_LENGTH]
 
 
 class Comment(PublishedModel):
@@ -139,4 +139,4 @@ class Comment(PublishedModel):
         ordering = ('created_at',)
 
     def __str__(self) -> str:
-        return self.text[:settings.REPRESENTATION_LENGTH]
+        return self.text[:REPRESENTATION_LENGTH]

@@ -37,4 +37,4 @@ urlpatterns = [
          views.category_posts, name='category_posts'),
     path('posts/', include(posts)),
     path('profile/', include(profile)),
-]
+] 

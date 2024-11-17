@@ -19,7 +19,12 @@ urlpatterns = [
         name='registration',
     ),
     path('', include('blog.urls', namespace='blog')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# Добавляем условие для статических файлов
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, 
+                          document_root=settings.MEDIA_ROOT)
 
 handler404 = 'pages.views.page_not_found'
 handler500 = 'pages.views.server_error'

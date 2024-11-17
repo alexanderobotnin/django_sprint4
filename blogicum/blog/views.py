@@ -1,7 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 
 from .forms import CommentForm, PostForm, ProfileEditForm
 from .models import Category, Comment, Post, User
@@ -10,8 +8,7 @@ from .service import get_paginator, get_posts
 
 def index(request):
     """Главная страница."""
-    post_list = get_posts(Post.objects.select_related(
-        'author', 'category')).order_by('-pub_date')
+    post_list = get_posts()
     page_obj = get_paginator(request, post_list)
     return render(request, 'blog/index.html', {'page_obj': page_obj})
 
@@ -20,7 +17,7 @@ def post_detail(request, post_id):
     """Полное описание выбранной записи."""
     posts = get_object_or_404(Post, id=post_id)
     if request.user != posts.author:
-        posts = get_object_or_404(get_posts(Post.objects), id=post_id)
+        posts = get_object_or_404(get_posts(), id=post_id)
     comments = posts.comments.order_by('created_at')
     form = CommentForm()
     return render(request, 'blog/detail.html',
@@ -31,8 +28,7 @@ def category_posts(request, category_slug):
     """Публикация категории."""
     category = get_object_or_404(
         Category, slug=category_slug, is_published=True)
-    post_list = get_posts(category.posts.select_related('author')
-                          ).order_by('-pub_date')
+    post_list = get_posts(Post.objects.filter(category=category))
     page_obj = get_paginator(request, post_list)
     context = {'category': category, 'page_obj': page_obj}
     return render(request, 'blog/category.html', context)
@@ -54,24 +50,10 @@ def create_post(request):
 def profile(request, username):
     """Возвращает профиль пользователя."""
     user = get_object_or_404(User, username=username)
-    now = timezone.now()
-    if user.is_authenticated:
-        posts_list = (
-            user.posts
-            .annotate(comment_count=Count('comments'))
-            .select_related('author')
-            .order_by('-pub_date')
-        )
+    if request.user.is_authenticated and request.user == user:
+        posts_list = get_posts(user.posts, include_hidden=True)
     else:
-        posts_list = (
-            user.posts.filter(
-                is_published=True,
-                pub_date__lte=now
-            )
-            .annotate(comment_count=Count('comments'))
-            .select_related('author')
-            .order_by('-pub_date')
-        )
+        posts_list = get_posts(user.posts)
     page_obj = get_paginator(request, posts_list)
     context = {'profile': user, 'page_obj': page_obj}
     return render(request, 'blog/profile.html', context)
