@@ -98,8 +98,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-POSTS_BY_PAGE = 5
-
 CSRF_FAILURE_VIEW = 'pages.views.csrf_failure'
 
 LOGIN_REDIRECT_URL = 'blog:index'

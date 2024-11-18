@@ -28,7 +28,7 @@ def category_posts(request, category_slug):
     """Публикация категории."""
     category = get_object_or_404(
         Category, slug=category_slug, is_published=True)
-    post_list = get_posts(Post.objects.filter(category=category))
+    post_list = get_posts(category.posts.all())
     page_obj = get_paginator(request, post_list)
     context = {'category': category, 'page_obj': page_obj}
     return render(request, 'blog/category.html', context)
