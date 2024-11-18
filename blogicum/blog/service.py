@@ -9,8 +9,8 @@ from .models import Post
 def get_posts(post_objects=Post.objects, include_hidden=False):
     """Посты из БД."""
     post_objects = post_objects.annotate(
-            comment_count=Count('comments')).select_related(
-                'author', 'category', 'location').order_by('-pub_date')
+        comment_count=Count('comments')).select_related(
+            'author', 'category', 'location').order_by('-pub_date')
     if include_hidden:
         return post_objects
     return post_objects.filter(
